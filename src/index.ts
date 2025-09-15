@@ -28,11 +28,11 @@ app.get('/', async (req: Request, res: Response) => {
     }
     try {
         const connection = await mysql.createConnection({
-            host: process.env.DBHOST,
-            user: process.env.DBUSER,
-            password: process.env.DBPASSWORD,
-            database: process.env.DBNAME,
-            port: Number(process.env.DBPORT)
+            host: process.env.DBHOST as string,
+            user: process.env.DBUSER as string,
+            password: process.env.DBPASSWORD as string,
+            database: process.env.DBNAME as string,
+            port: Number(process.env.DBPORT) 
         })
         res.send("Conectado ao banco de dados com sucesso!");
         await connection.end();
@@ -58,10 +58,28 @@ CREATE TABLE produtos (
 );
 Faz pelo menos 3 inserções nessa tabela
 */ 
+app.get('/produtos', async (req: Request, res: Response) => {
+    try {
+        const connection = await mysql.createConnection({
+            host: process.env.DBHOST as string,
+            user: process.env.DBUSER as string,
+            password: process.env.DBPASSWORD as string,
+            database: process.env.DBNAME as string,
+            port: Number(process.env.DBPORT)
+        })
+
+        const [rows] = await connection.execute('SELECT * FROM produtos')
+        res.json(rows)
+
+        await connection.end()
+    }
+    catch (error) {
+        res.status(500).send("Erro ao buscar produtos: " + error)
+    }
+})
 
 
 
-
-app.listen(8000, () => {
-    console.log('Server is running on port 8000');
+app.listen(23649, () => {
+    console.log('Server is running on port 23649');
 });
